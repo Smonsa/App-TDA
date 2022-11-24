@@ -2,102 +2,84 @@ import React, { useState } from 'react';
 import Title from './components/Title/Title';
 import  Label from './components/Label/Label';
 import  Input from './components/Input/input';
-import Register from '../Register/Register';
-import Home from '../Home/Home';
+import Logine from '../Login/Login';
 
-const Login= () =>{
+const Register = () =>{
 
 	const [ user, setUser ] = useState(' ');
 	const [ password, setPass ] = useState(' ');
+	const [ password2, setPass2 ] = useState(' ');
 	const [ passwordError, setPassError ] = useState(false);
+	const [ passwordError2, setPassError2 ] = useState(false);
 	const [ Login, setLogin ] = useState(false);
 	const [ Registro, setRegistro ] = useState(false);
 	const [ checkError, setcheckError] = useState(false);
-	const [ Account, setAccount ] = useState({});
 
 	function handleChange(name, value) {
 		if(name==="usuario"){
 			setUser (value);
 			setcheckError(false);
 		} else {
-			if(value.length < 6){
+			if(value.length < 6 && name==="contrasena" ){
 				setPassError(true);
 				setcheckError(false);
-			} else {
+			} else if (name==="contrasena"){
 				setPassError(false);
 				setPass(value);
 				setcheckError(false);
 			}
 		}
+		if(name==="contrasena2"){
+			setPass2 (value);
+			setcheckError(false);
+			setPassError2(false);
+		} 
 	};
 
-function ValidSubmit(datos){
+	function ValidSubmit(datos){
 	if (datos.user.length > 0 && datos.password.length > 0){
-		if (datos.user === "megatron" && datos.password === "333333") {
+		
 			const { user, password } = datos;
 			let UP = { user, password};
 			let UP2 = JSON.stringify(UP);
 			localStorage.setItem("datos", UP2);
-
-			setAccount( Account => ({ 
-				user, 
-				password
-				}));
 			setLogin(true);
-			console.log("cuenta", Account);
 
-		} else{
-			setLogin(false);
-			setcheckError(true);
-		}
+		
 
 	} else {
 		setLogin(false);
 		setcheckError(true);
 	}
 
-};
-
-const parentToChild = () => {
-    setAccount( Account => ({ 
-				user, 
-				password
-				}));
-    console.log("ajooo ", Account);
-  }
+}
 
 function submit() {
 	let account = { user, password}
-	if(account) {
+	if(password === password2 ) {
 		ValidSubmit(account);
+		setPassError2(false);
+	} else {
+		setPassError2(true);
 	}
-};
-
-function matrolo() {
-	setRegistro(true);
-
 };
 
 console.log("usuario:", user)
 console.log("usuario:", password)
-
+console.log("usuario:", password2)
 	return(
+
 		
-				 <div className="Container"> 
+		<div className="container">
+		{ Login ? <Logine/> :
 
-				{  Login ? <Home parentToChild={Account} /> :
-			 <div className="Container"> 
-
-				  { Registro ? <Register/> : 
-				  	
-				 <div className="pa2">
-					
-					 <Title text=<h1> Nombre Genial Para la App</h1>  />	  
-					 { checkError &&
-						  <label className="light-red" > Usuario o contraseña incorectos
+			<div className="pa2  ">
+			{ checkError &&
+						  <label className="light-red" > Error en los datos, vuelva a verificar
 						 </label > 
 					}
-					 <Label   text ="Usuario" />
+			<Title text=<h1> Ingrese sus datos</h1>  />
+				<Label   text ="Usuario" />
 					 <Input 
 					 attribute={{
 					 	id: "Usuario",
@@ -129,25 +111,43 @@ console.log("usuario:", password)
 					 </label>
 					  }
 					 </div>
+
+					 <div className="pa2  ">
+					 <Label  text ="Vuelva a ingresar su Contraseña"/>
+					  <Input 
+					 attribute={{
+					 	id: "Contrasena2",
+					 	name : "contrasena2",
+					 	placeholder: "Contraseña",
+					 	type:  "Password",
+					 	class: "pa3 f6 grow no-underline br-pill ba bw1 ph3  mb2 dib ba b--green bg-lightest-blue"
+					 }}
+					 handleChange = {handleChange}
+					 param={passwordError}
+					 />
+
+					{ passwordError2 &&
+					 <label className="light-red">
+					 	Las contraseñas no concuerdan
+					 </label>
+					  }
+					 </div>
+
 					 <div className=" "/>
-					<button className= "pa3 f9 grow no-underline br-pill ba bw1 ph3 pv2 mb2 dib ba b--green bg-lightest-blue" onClick={submit}>
-						Ingresar
+					<button className= "pa3 f9 grow no-underline br-pill ba bw1 ph3 pv2 mb2 dib ba b--green bg-lightest-blue"onClick={submit}>
+						Crear Cuenta
 					</button>	
-
-					<div className=" "/>			 
+					<div className=" "/>		
+					<label className= "" >
+							 <a className="f5 link dib black dim mr8" href="http://localhost:3000/"> Login </a>
+						</label>	
+					 </div>
 					
-					<label className= "" onClick={matrolo} >
-						Registrate 
-					</label>	
-				 	
-				 </div>
-				 
-				  }
-			 </div>
-			  }
-			  </div>
-			  
-		);
-}
+						
+				}
 
-export default Login;
+							 </div>
+							 );
+	}
+
+export default Register;
